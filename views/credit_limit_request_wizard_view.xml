@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_credit_limit_request_wizard_form" model="ir.ui.view">
+        <field name="name">credit.limit.request.wizard.form</field>
+        <field name="model">credit.limit.request.wizard</field>
+        <field name="arch" type="xml">
+
+            <form string="Request Credit Limit">
+                <header>
+                    <field name="title" invisible="1"/>
+                </header>
+
+                <sheet>
+                    <h2>
+                        <field name="title" nolabel="1" readonly="1"/>
+                    </h2>
+
+                    <group>
+                        <field name="partner_id" readonly="1"/>
+
+                        <field name="sale_order_id"
+                               readonly="1"
+                               invisible="not context.get('from_sale_order')"/>
+
+                        <field name="requested_limit"/>
+
+                        <!-- ✅ Dynamic reason -->
+                        <field name="reason_id"/>
+
+                        <!-- ✅ Always visible (python enforces when required) -->
+                        <field name="reason_note" placeholder="Enter details..."/>
+                    </group>
+                </sheet>
+
+                <footer>
+                    <button name="action_submit"
+                            type="object"
+                            string="Submit Request"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            special="cancel"
+                            class="btn-secondary"/>
+                </footer>
+            </form>
+
+        </field>
+    </record>
+
+</odoo>

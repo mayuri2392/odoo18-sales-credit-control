@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_sales_credit_control" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.sales_credit_control</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//form" position="inside">
+                <app string="Sales" name="sale">
+                    <block title="Credit Control &amp; Approval Rules" name="sales_credit_control_settings_block">
+                        <setting id="enforce_credit_block_setting"
+                                 string="Enforce Credit Blocking"
+                                 help="Block Sales Order confirmation when customer credit setup is missing or credit limit is exceeded without approval.">
+                            <field name="enforce_credit_block"/>
+                        </setting>
+
+                        <setting id="enforce_below_cost_approval_setting"
+                                 string="Enforce Below Cost Approval"
+                                 help="Block Sales Order confirmation when order lines are below cost and no Sales Manager approval exists.">
+                            <field name="enforce_below_cost_approval"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

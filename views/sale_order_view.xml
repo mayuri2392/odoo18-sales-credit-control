@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ========================================================= -->
+    <!-- Customer + Credit Status -->
+    <!-- ========================================================= -->
+    <record id="view_order_form_credit_status" model="ir.ui.view">
+        <field name="name">sale.order.form.credit.status</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">90</field>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='partner_id'][1]" position="attributes">
+                <attribute name="context">
+                    {'res_partner_search_mode': 'customer', 'show_address': 0, 'show_vat': False}
+                </attribute>
+            </xpath>
+
+            <xpath expr="//sheet//field[@name='partner_id'][1]" position="after">
+                <field name="credit_setup_missing" invisible="1"/>
+                <field name="credit_exceeded" invisible="1"/>
+                <field name="credit_increase_state" invisible="1"/>
+                <field name="partner_credit_pending" invisible="1"/>
+                <field name="credit_increase_approved" invisible="1"/>
+
+                <div class="mt-2" invisible="not partner_id">
+                    <div class="o_row">
+                        <label for="credit_status" string="Credit Status"/>
+                        <field name="credit_status" nolabel="1" readonly="1" class="o_inline ms-2"/>
+                    </div>
+                </div>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- ========================================================= -->
+    <!-- Credit Banners -->
+    <!-- ========================================================= -->
+    <record id="view_order_form_credit_banners" model="ir.ui.view">
+        <field name="name">sale.order.form.credit.banners</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">95</field>
+        <field name="arch" type="xml">
+
+            <xpath expr="//header" position="after">
+                <field name="credit_setup_missing" invisible="1"/>
+                <field name="credit_exceeded" invisible="1"/>
+                <field name="partner_credit_pending" invisible="1"/>
+                <field name="credit_increase_state" invisible="1"/>
+                <field name="credit_increase_reject_reason" invisible="1"/>
+                <field name="credit_increase_approved" invisible="1"/>
+
+                <div class="alert alert-warning mt-2"
+                     role="alert"
+                     invisible="not credit_setup_missing">
+                    Customer credit setup is not approved yet. Complete Customer Credit Setup first.
+                </div>
+
+                <div class="alert alert-info mt-2"
+                     role="alert"
+                     invisible="credit_increase_state != 'requested' and not partner_credit_pending">
+                    Credit approval is pending with Accounting.
+                </div>
+
+                <div class="alert alert-danger mt-2"
+                     role="alert"
+                     invisible="credit_increase_state != 'rejected'">
+                    <div>Credit increase request was rejected.</div>
+                    <div invisible="not credit_increase_reject_reason" class="mt-1">
+                        <strong>Reason:</strong>
+                        <field name="credit_increase_reject_reason" readonly="1" nolabel="1"/>
+                    </div>
+                </div>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- ========================================================= -->
+    <!-- Credit Increase Buttons -->
+    <!-- ========================================================= -->
+    <record id="view_order_form_request_credit_buttons" model="ir.ui.view">
+        <field name="name">sale.order.form.request.credit.buttons</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">999</field>
+        <field name="arch" type="xml">
+
+            <xpath expr="//header" position="inside">
+                <field name="credit_setup_missing" invisible="1"/>
+                <field name="credit_exceeded" invisible="1"/>
+                <field name="credit_increase_state" invisible="1"/>
+                <field name="partner_credit_pending" invisible="1"/>
+                <field name="credit_increase_approved" invisible="1"/>
+
+                <button name="action_request_credit"
+                        type="object"
+                        string="Request Credit Increase"
+                        class="oe_highlight"
+                        groups="sales_team.group_sale_salesman,sales_team.group_sale_salesman_all_leads,sales_team.group_sale_manager"
+                        invisible="credit_setup_missing or not credit_exceeded or partner_credit_pending or credit_increase_state != 'none' or credit_increase_approved"/>
+
+                <button name="action_request_credit"
+                        type="object"
+                        string="Re-request Credit Increase"
+                        class="oe_highlight"
+                        groups="sales_team.group_sale_salesman,sales_team.group_sale_salesman_all_leads,sales_team.group_sale_manager"
+                        invisible="credit_setup_missing or not credit_exceeded or credit_increase_state != 'rejected'"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- ========================================================= -->
+    <!-- Below Cost Warning / Status Banners -->
+    <!-- ========================================================= -->
+    <record id="view_order_form_below_cost_banner" model="ir.ui.view">
+        <field name="name">sale.order.form.below.cost.banner</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">980</field>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="after">
+                <field name="below_cost_warning" invisible="1"/>
+                <field name="below_cost_warning_message" invisible="1"/>
+                <field name="below_cost_approval_state" invisible="1"/>
+                <field name="below_cost_reject_reason" invisible="1"/>
+
+                <div class="alert alert-warning mt-2"
+                     role="alert"
+                     invisible="not below_cost_warning">
+                    <field name="below_cost_warning_message" nolabel="1" readonly="1"/>
+                </div>
+
+                <div class="alert alert-info mt-2"
+                     role="alert"
+                     invisible="below_cost_approval_state != 'requested'">
+                    Below-cost approval is pending with Sales Manager.
+                </div>
+
+                <div class="alert alert-danger mt-2"
+                     role="alert"
+                     invisible="below_cost_approval_state != 'rejected'">
+                    <div>Below-cost approval rejected by Sales Manager</div>
+                    <div invisible="not below_cost_reject_reason" class="mt-1">
+                        <strong>Reason:</strong>
+                        <field name="below_cost_reject_reason" readonly="1" nolabel="1"/>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ========================================================= -->
+    <!-- Below Cost Hidden Technical Fields -->
+    <!-- ========================================================= -->
+    <record id="view_order_form_below_cost_hidden_fields" model="ir.ui.view">
+        <field name="name">sale.order.form.below.cost.hidden.fields</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">990</field>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group invisible="1">
+                    <field name="below_cost_warning"/>
+                    <field name="below_cost_warning_message"/>
+                    <field name="below_cost_approval_state"/>
+                    <field name="below_cost_approved"/>
+                    <field name="below_cost_reject_reason"/>
+                    <field name="below_cost_approval_snapshot"/>
+                    <field name="below_cost_requested_by"/>
+                    <field name="below_cost_requested_on"/>
+                    <field name="below_cost_approved_by"/>
+                    <field name="below_cost_approved_on"/>
+                    <field name="below_cost_request_allowed"/>
+                    <field name="is_sales_manager_user"/>
+                    <field name="is_system_admin_user"/>
+                    <field name="is_sales_user_only"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ========================================================= -->
+    <!-- Below Cost Approval Audit Tab -->
+    <!-- ========================================================= -->
+    <record id="view_order_form_below_cost_audit_tab" model="ir.ui.view">
+        <field name="name">sale.order.form.below.cost.audit.tab</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">995</field>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/notebook" position="inside">
+                <page string="Approval History">
+                    <group string="Below Cost Approval"
+                           invisible="below_cost_approval_state == 'none' and not below_cost_approved and not below_cost_requested_by and not below_cost_requested_on">
+                        <group>
+                            <field name="below_cost_approval_state" readonly="1"/>
+                            <field name="below_cost_requested_by" readonly="1"/>
+                            <field name="below_cost_requested_on" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="below_cost_approved_by" readonly="1"/>
+                            <field name="below_cost_approved_on" readonly="1"/>
+                            <field name="below_cost_reject_reason" readonly="1"
+                                   invisible="below_cost_approval_state != 'rejected'"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ========================================================= -->
+    <!-- Below Cost Approval Buttons -->
+    <!-- ========================================================= -->
+    <record id="view_order_form_below_cost_approval_buttons" model="ir.ui.view">
+        <field name="name">sale.order.form.below.cost.approval.buttons</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">2000</field>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+
+                <field name="below_cost_warning" invisible="1"/>
+                <field name="below_cost_approval_state" invisible="1"/>
+                <field name="below_cost_approved" invisible="1"/>
+                <field name="below_cost_request_allowed" invisible="1"/>
+
+                <button name="action_request_below_cost_approval"
+                        type="object"
+                        string="Request Below Cost Approval"
+                        class="oe_highlight"
+                        groups="sales_team.group_sale_salesman,sales_team.group_sale_salesman_all_leads,base.group_system"
+                        invisible="not below_cost_warning or below_cost_approved or below_cost_approval_state != 'none' or not below_cost_request_allowed"/>
+
+                <button name="action_request_below_cost_approval"
+                        type="object"
+                        string="Re-request Below Cost Approval"
+                        class="oe_highlight"
+                        groups="sales_team.group_sale_salesman,sales_team.group_sale_salesman_all_leads,base.group_system"
+                        invisible="not below_cost_warning or below_cost_approved or below_cost_approval_state != 'rejected' or not below_cost_request_allowed"/>
+
+                <button name="action_approve_below_cost"
+                        type="object"
+                        string="Approve Below Cost"
+                        class="btn-primary"
+                        groups="sales_team.group_sale_manager,base.group_system"
+                        invisible="not below_cost_warning or below_cost_approved or below_cost_approval_state != 'requested'"/>
+
+                <button name="action_reject_below_cost"
+                        type="object"
+                        string="Reject Below Cost"
+                        class="btn-secondary"
+                        groups="sales_team.group_sale_manager,base.group_system"
+                        invisible="not below_cost_warning or below_cost_approved or below_cost_approval_state != 'requested'"/>
+
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ========================================================= -->
+    <!-- CREDIT TIER BADGE UNDER CUSTOMER NAME (Header) -->
+    <!-- ========================================================= -->
+    <record id="view_partner_form_credit_tier_badge" model="ir.ui.view">
+        <field name="name">res.partner.form.credit.tier.badge</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="priority">55</field>
+        <field name="arch" type="xml">
+
+            <xpath expr="//sheet//div[contains(@class,'oe_title')]/h1" position="after">
+                <field name="credit_tier_id" invisible="1"/>
+                <field name="credit_tier_tag_ids" invisible="1"/>
+
+                <div class="mt-1" invisible="not credit_tier_id">
+                    <field name="credit_tier_tag_ids"
+                           widget="many2many_tags"
+                           nolabel="1"
+                           readonly="1"
+                           options="{'no_create': True, 'no_create_edit': True, 'color_field': 'color'}"/>
+                </div>
+            </xpath>
+
+        </field>
+    </record>
+
+
+    <!-- ========================================================= -->
+    <!-- CREDIT SETUP TAB -->
+    <!-- ========================================================= -->
+    <record id="view_partner_form_credit_setup_tab" model="ir.ui.view">
+        <field name="name">res.partner.form.credit.setup</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="priority">60</field>
+        <field name="arch" type="xml">
+
+            <xpath expr="//sheet//notebook" position="inside">
+
+                <page string="Credit Setup"
+                      groups="sales_team.group_sale_salesman,sales_team.group_sale_salesman_all_leads,sales_team.group_sale_manager,base.group_system">
+
+                    <field name="is_system_admin_user" invisible="1"/>
+                    <field name="credit_setup_done" invisible="1"/>
+                    <field name="credit_request_state" invisible="1"/>
+                    <field name="tier_default_credit_limit" invisible="1"/>
+
+                    <group string="Step 1: Credit Tier">
+                        <field name="credit_tier_id"
+                               options="{'no_create_edit': True}"
+                               readonly="credit_setup_done"/>
+                        <field name="tier_default_credit_limit"
+                               string="Tier Default Credit Limit"
+                               readonly="1"
+                               invisible="not credit_tier_id"/>
+                    </group>
+
+                    <group string="Step 2: Pricelist">
+                        <field name="property_product_pricelist"
+                               readonly="credit_setup_done"/>
+                    </group>
+
+                    <group string="Step 3: Request Status"
+                           groups="sales_credit_control.group_credit_setup_requestor">
+
+                        <button name="action_open_credit_request_wizard"
+                                type="object"
+                                string="Request Credit Limit"
+                                class="oe_highlight"
+                                invisible="credit_setup_done or credit_request_state == 'requested'"/>
+
+                        <div class="o_form_label text-muted"
+                             invisible="credit_request_state != 'requested'">
+                            Credit request is pending approval from Accounting.
+                        </div>
+
+                        <div class="o_form_label text-success"
+                             invisible="credit_request_state != 'approved'">
+                            Credit limit is approved and configured.
+                        </div>
+
+                        <div class="o_form_label text-danger"
+                             invisible="credit_request_state != 'rejected'">
+                            Credit request rejected. Please revise and resubmit.
+                        </div>
+
+                    </group>
+
+                </page>
+
+            </xpath>
+
+        </field>
+    </record>
+
+
+    <!-- ========================================================= -->
+    <!-- CREDIT APPROVAL (ACCOUNTING MANAGER ONLY) -->
+    <!-- ========================================================= -->
+    <record id="view_partner_form_credit_approval_tab" model="ir.ui.view">
+        <field name="name">res.partner.form.credit.approval</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="priority">70</field>
+        <field name="arch" type="xml">
+
+            <xpath expr="//sheet/notebook" position="inside">
+
+                <page string="Credit Approval"
+                      name="credit_approval_page"
+                      groups="account.group_account_manager,base.group_system"
+                      invisible="not id or credit_request_state != 'requested'">
+
+                    <group invisible="1">
+                        <field name="credit_request_state"/>
+                        <field name="credit_request_sale_order_id"/>
+                        <field name="credit_tier_id"/>
+                        <field name="tier_default_credit_limit"/>
+                    </group>
+
+                    <group>
+                        <field name="credit_request_state"
+                               widget="statusbar"
+                               statusbar_visible="requested,approved,rejected"/>
+                    </group>
+
+                    <group string="Credit Snapshot"
+                           col="2"
+                           invisible="not credit_request_sale_order_id">
+                        <field name="credit_limit" readonly="1" string="Current Active Credit Limit"/>
+                        <field name="current_exposure" readonly="1" string="Current Exposure (Receivables)"/>
+                    </group>
+
+                    <group col="2" string="Request Details">
+                        <field name="credit_tier_id" readonly="1" string="Credit Tier"/>
+                        <field name="tier_default_credit_limit"
+                               readonly="1"
+                               string="Tier Default Limit"
+                               invisible="not credit_tier_id"/>
+                        <field name="credit_limit_requested" readonly="1" string="Requested Credit Limit"/>
+                        <field name="credit_limit_approved" string="Approved Credit Limit"/>
+                        <field name="credit_request_reason" readonly="1" string="Request Reason"/>
+                        <field name="credit_requested_by" readonly="1" string="Requested By"/>
+
+                        <field name="credit_reject_reason"
+                               readonly="1"
+                               string="Rejection Reason"
+                               invisible="credit_request_state != 'rejected'"/>
+                    </group>
+
+                    <group>
+                        <button name="action_approve_credit"
+                                type="object"
+                                string="Approve"
+                                class="btn-primary"/>
+                        <button name="action_open_reject_wizard"
+                                type="object"
+                                string="Reject"
+                                class="btn-secondary"/>
+                    </group>
+
+                </page>
+
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

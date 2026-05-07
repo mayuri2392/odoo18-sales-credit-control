@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Views -->
+    <record id="view_approval_reason_tree" model="ir.ui.view">
+        <field name="name">approval.reason.tree</field>
+        <field name="model">approval.reason</field>
+        <field name="arch" type="xml">
+            <list string="Reasons">
+                <field name="sequence" optional="show"/>
+                <field name="name"/>
+                <field name="reason_type"/>
+                <field name="company_id" optional="show"/>
+                <field name="requires_note" optional="show"/>
+                <field name="active" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Original shared form — kept intact -->
+    <record id="view_approval_reason_form" model="ir.ui.view">
+        <field name="name">approval.reason.form</field>
+        <field name="model">approval.reason</field>
+        <field name="arch" type="xml">
+            <form string="Reason">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="reason_type"/>
+                        <field name="company_id"/>
+                        <field name="sequence"/>
+                        <field name="requires_note"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Credit form: uses reason_type_credit — only 3 credit options, no below_cost -->
+    <record id="view_approval_reason_form_credit" model="ir.ui.view">
+        <field name="name">approval.reason.form.credit</field>
+        <field name="model">approval.reason</field>
+        <field name="arch" type="xml">
+            <form string="Credit Reason">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="reason_type_credit" required="1"/>
+                        <field name="reason_type" invisible="1"/>
+                        <field name="company_id"/>
+                        <field name="sequence"/>
+                        <field name="requires_note"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Below-cost form: reason_type hidden, set via context default -->
+    <record id="view_approval_reason_form_below_cost" model="ir.ui.view">
+        <field name="name">approval.reason.form.below_cost</field>
+        <field name="model">approval.reason</field>
+        <field name="arch" type="xml">
+            <form string="Below-Cost Reason">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="reason_type" invisible="1"/>
+                        <field name="company_id"/>
+                        <field name="sequence"/>
+                        <field name="requires_note"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_credit_reasons" model="ir.actions.act_window">
+        <field name="name">Credit Reasons</field>
+        <field name="res_model">approval.reason</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('reason_type','in',['credit_initial','credit_increase','credit_reject'])]</field>
+        <field name="context">{'default_reason_type': 'credit_increase'}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_approval_reason_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_approval_reason_form_credit')})]"/>
+    </record>
+
+    <record id="action_below_cost_reasons" model="ir.actions.act_window">
+        <field name="name">Below-Cost Reasons</field>
+        <field name="res_model">approval.reason</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('reason_type','=','below_cost_reject')]</field>
+        <field name="context">{'default_reason_type': 'below_cost_reject'}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_approval_reason_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_approval_reason_form_below_cost')})]"/>
+    </record>
+
+    <!-- Menus -->
+    <!-- Accounting: under Accounting > Configuration > Credit Control (after Credit Tiers) -->
+    <menuitem id="menu_credit_reasons"
+              name="Credit Reasons"
+              parent="menu_credit_control_root"
+              action="action_credit_reasons"
+              sequence="15"
+              groups="account.group_account_manager"/>
+
+    <!-- Sales Manager: under Sales > Configuration -->
+    <menuitem id="menu_below_cost_reasons"
+              name="Below-Cost Reasons"
+              parent="sale.menu_sale_config"
+              action="action_below_cost_reasons"
+              sequence="210"
+              groups="sales_team.group_sale_manager"/>
+
+</odoo>

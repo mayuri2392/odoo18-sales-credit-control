@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="group_credit_config_manager" model="res.groups">
+        <field name="name">Credit Configuration Manager</field>
+    </record>
+
+    <record id="group_pricing_config_manager" model="res.groups">
+        <field name="name">Pricing Configuration Manager</field>
+    </record>
+
+    <record id="group_credit_setup_requestor" model="res.groups">
+    <field name="name">Credit Setup Requestor</field>
+
+</record>
+
+</odoo>

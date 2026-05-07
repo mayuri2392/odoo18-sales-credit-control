@@ -1,0 +1,16 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_credit_limit_request_wizard_user,credit.limit.request.wizard user,model_credit_limit_request_wizard,base.group_user,1,1,1,0
+access_credit_limit_request_wizard_manager,credit.limit.request.wizard manager,model_credit_limit_request_wizard,sales_team.group_sale_manager,1,1,1,0
+access_credit_limit_request_wizard_admin,credit.limit.request.wizard admin,model_credit_limit_request_wizard,base.group_system,1,1,1,0
+access_credit_limit_reject_wizard_account,credit.limit.reject.wizard account,model_credit_limit_reject_wizard,account.group_account_manager,1,1,1,0
+access_credit_limit_reject_wizard_admin,credit.limit.reject.wizard admin,model_credit_limit_reject_wizard,base.group_system,1,1,1,0
+access_below_cost_reject_wizard_manager,below.cost.reject.wizard manager,model_below_cost_reject_wizard,sales_team.group_sale_manager,1,1,1,0
+access_below_cost_reject_wizard_admin,below.cost.reject.wizard admin,model_below_cost_reject_wizard,base.group_system,1,1,1,0
+access_credit_tier_admin,credit.tier admin,model_credit_tier,base.group_system,1,1,1,1
+access_credit_tier_account_mgr,credit.tier account manager,model_credit_tier,account.group_account_manager,1,1,1,1
+access_credit_tier_salesman_read,credit.tier salesman read,model_credit_tier,sales_team.group_sale_salesman,1,0,0,0
+access_credit_tier_sales_manager_read,credit.tier sales manager read,model_credit_tier,sales_team.group_sale_manager,1,0,0,0
+access_credit_tier_salesman_all_leads_read,credit.tier salesman all leads read,model_credit_tier,sales_team.group_sale_salesman_all_leads,1,0,0,0
+access_approval_reason_user,approval.reason user,model_approval_reason,base.group_user,1,0,0,0
+access_approval_reason_credit_mgr,approval.reason credit mgr,model_approval_reason,sales_credit_control.group_credit_config_manager,1,1,1,1
+access_approval_reason_pricing_mgr,approval.reason pricing mgr,model_approval_reason,sales_credit_control.group_pricing_config_manager,1,1,1,1

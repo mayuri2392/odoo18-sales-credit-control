@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_kanban_credit_tier_badge" model="ir.ui.view">
+        <field name="name">res.partner.kanban.credit.tier.badge</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.res_partner_kanban_view"/>
+        <field name="priority">60</field>
+        <field name="arch" type="xml">
+
+            <!-- Make credit tier fields available in kanban -->
+            <xpath expr="//kanban" position="inside">
+                <field name="credit_tier_id"/>
+                <field name="credit_tier_tag_ids"/>
+            </xpath>
+
+            <!-- Put badge exactly BELOW the partner name -->
+            <xpath expr="//templates/t[@t-name='card']//field[@name='display_name']" position="after">
+                <t t-if="record.credit_tier_id and record.credit_tier_id.raw_value">
+                    <div class="mt-1">
+                        <field name="credit_tier_tag_ids"
+                               widget="many2many_tags"
+                               nolabel="1"
+                               readonly="1"
+                               options="{'no_create': True, 'no_create_edit': True, 'color_field': 'color'}"/>
+                    </div>
+                </t>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
