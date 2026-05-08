@@ -87,7 +87,11 @@ Each customer is assigned a tier on the **Credit Setup** tab. The salesperson re
 
 **Prerequisites:** The **Sales** app must be installed before this module. Accounting and Inventory are also required (listed in depends).
 
-1. Copy the `sales_credit_control` folder into your Odoo `custom_addons` directory
+1. Clone the repo into your addons folder:
+```bash
+   git clone https://github.com/mayuri2392/odoo18-sales-credit-control.git \
+     ~/Projects/odoo18/custom_addons/sales_credit_control
+```
 2. Restart Odoo
 3. Go to **Settings → Apps**, search for `Sales Credit Control`, and install it
 4. Configure credit tiers under **Invoicing → Configuration → Credit Control → Credit Tiers**
